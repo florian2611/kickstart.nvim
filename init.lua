@@ -42,6 +42,8 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+in_wsl = os.getenv('WSL_DISTRO_NAME') ~= nil
+
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -208,6 +210,21 @@ vim.o.mouse = 'a'
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
 vim.o.clipboard = 'unnamedplus'
+
+if in_wsl then
+  vim.g.clipboard = {
+    name = 'WslClipboard',
+    copy =  {
+      ['+'] = { 'clip.exe' },
+      ['*'] = { 'clip.exe' },
+    },
+    paste = {
+      ['+'] = { 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))' },
+      ['*'] = { 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))' },
+    },
+    cache_enabled = 0,
+  }
+end
 
 -- Enable break indent
 vim.o.breakindent = true
